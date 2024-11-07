@@ -19,39 +19,193 @@ CREATE TABLE Student(
 );
 
 CREATE TABLE Schedule(
-	id INT NOT NULL IDENTITY(1,1),
 	Student_code int NOT NULL,
 	day VARCHAR(20),
 	start_time TIME,
 	end_time TIME,
-	PRIMARY KEY (id)
+	PRIMARY KEY (Student_code)
+);
+
+CREATE TABLE Student_skills(
+	ID int NOT NULL IDENTITY(1,1),
+	student_code int NOT NULL,
+	skill_id int NOT NULL,
+	PRIMARY KEY (ID)
 );
 
 CREATE TABLE Skills(
-	id INT NOT NULL IDENTITY(1,1),
-	student_code int NOT NULL,
+	ID int NOT NULL IDENTITY(1,1),
 	skill VARCHAR(80),
-	PRIMARY KEY (id)
+	PRIMARY KEY (ID)
 );
 
 CREATE TABLE Adviser(
-	id INT NOT NULL IDENTITY(1,1),
 	adviser_code INT NOT NULL,
 	division VARCHAR(80),
+	PRIMARY KEY (adviser_code)
+);
+
+CREATE TABLE Project(
+	ID int NOT NULL IDENTITY(1,1),
+	name VARCHAR(80),
+	description VARCHAR(200),
+	available_spaces INT,
+	path VARCHAR(100),
+	creation_date DATE,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE Project_members(
+	id INT NOT NULL IDENTITY(1,1),
+	user_code int NOT NULL,
+	project_id int NOT NULL,
+	type VARCHAR(20),
 	PRIMARY KEY (id)
 );
 
-//ANTES DE CONTINUAR EJECUTA EL SIGUIENTE COMANDO:
-dotnet ef dbcontext scaffold "Server=localhost;Database=LinkProject;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;" Microsoft.EntityFrameworkCore.SqlServer -o Models
+CREATE TABLE project_requirements(
+	ID int NOT NULL IDENTITY(1,1),
+	project_id int NOT NULL,
+	req_id int NOT NULL,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE requirements(
+	ID int NOT NULL IDENTITY(1,1),
+	name VARCHAR(50),
+	description VARCHAR(200),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE project_areas(
+	ID int NOT NULL IDENTITY(1,1),
+	project_id int NOT NULL,
+	area_id int NOT NULL,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE areas(
+	ID int NOT NULL IDENTITY(1,1),
+	name VARCHAR(50),
+	description VARCHAR(200),
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE project_innovation(
+	ID int NOT NULL IDENTITY(1,1),
+	project_id int NOT NULL,
+	innovation_id int NOT NULL,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE innovation(
+	id INT NOT NULL IDENTITY(1,1),
+	name VARCHAR(50),
+	description VARCHAR(200),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Member_request(
+	ID int NOT NULL IDENTITY(1,1),
+	status VARCHAR(50),
+	submitted_date DATE,
+	project_id int NOT NULL,
+	student_code int NOT NULL,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE Meeting_request(
+	ID int NOT NULL IDENTITY(1,1),
+	status VARCHAR(50),
+	message VARCHAR(50),
+	schedule_time DATETIME,
+	adviser_code int NOT NULL,
+	project_id int NOT NULL,
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE Confirm_meeting(
+	id INT NOT NULL IDENTITY(1,1),
+	accepted BIT,
+	student_code int NOT NULL,
+	project_id int NOT NULL,
+	meet_id int NOT NULL,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Tasks(
+	ID int NOT NULL IDENTITY(1,1),
+	title VARCHAR(80),
+	status VARCHAR(50),
+	description VARCHAR(200),
+	due_date DATE,
+	student_code int NOT NULL,
+	project_id int NOT NULL,
+	PRIMARY KEY (ID)
+);
 
 ALTER TABLE Student
 ADD CONSTRAINT FK_User_Code FOREIGN KEY (student_code) REFERENCES [User](code);
 
 ALTER TABLE Schedule
-ADD CONSTRAINT FK_Schedule_Id FOREIGN KEY (Student_code) REFERENCES Student(student_code);
+ADD CONSTRAINT FK_Schedule_Id FOREIGN KEY (Student_code) REFERENCES [User](code);
 
-ALTER TABLE Skills
+ALTER TABLE Student_skills
 ADD CONSTRAINT FK_Student_Code_skills FOREIGN KEY (student_code) REFERENCES [User](code);
+
+ALTER TABLE Student_skills
+ADD CONSTRAINT FK_Student_id_skills FOREIGN KEY (skill_id) REFERENCES Skills(ID);
 
 ALTER TABLE Adviser
 ADD CONSTRAINT FK_UserAdviser_Code FOREIGN KEY (adviser_code) REFERENCES [User](code);
+
+ALTER TABLE Project_members
+ADD CONSTRAINT FK_ProjectMembers_id FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE Project_members
+ADD CONSTRAINT FK_ProjectMem_id FOREIGN KEY (user_code) REFERENCES [User](code);
+
+ALTER TABLE project_requirements
+ADD CONSTRAINT FK_ProjectReq_project FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE project_requirements
+ADD CONSTRAINT FK_ProjectReq_req FOREIGN KEY (req_id) REFERENCES requirements(id);
+
+ALTER TABLE project_areas
+ADD CONSTRAINT FK_Areas_project FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE project_areas
+ADD CONSTRAINT FK_Areas_id FOREIGN KEY (area_id) REFERENCES areas(id);
+
+ALTER TABLE project_innovation
+ADD CONSTRAINT FK_ProjectInn_project FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE project_innovation
+ADD CONSTRAINT FK_ProjectInn_id FOREIGN KEY (innovation_id) REFERENCES innovation(id);
+
+ALTER TABLE Member_request
+ADD CONSTRAINT FK_StudentReq_code FOREIGN KEY (student_code) REFERENCES [user](code);
+
+ALTER TABLE Member_request
+ADD CONSTRAINT FK_ProjectReq_code FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE Meeting_request
+ADD CONSTRAINT FK_ProjectMetReq_code FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE Meeting_request
+ADD CONSTRAINT FK_AdviserMetReq_code FOREIGN KEY (adviser_code) REFERENCES [User](code);
+
+ALTER TABLE Confirm_meeting
+ADD CONSTRAINT FK_StudentConf_code FOREIGN KEY (student_code) REFERENCES [User](code);
+
+ALTER TABLE Confirm_meeting
+ADD CONSTRAINT FK_ProjectConf_Id FOREIGN KEY (project_id) REFERENCES Project(id);
+
+ALTER TABLE Confirm_meeting
+ADD CONSTRAINT FK_Meet_id FOREIGN KEY (meet_id) REFERENCES Meeting_request(id);
+
+ALTER TABLE Tasks
+ADD CONSTRAINT FK_StudentTask_code FOREIGN KEY (student_code) REFERENCES [user](code);
+
+ALTER TABLE Tasks
+ADD CONSTRAINT FK_ProjectTask_Id FOREIGN KEY (project_id) REFERENCES Project(id);
