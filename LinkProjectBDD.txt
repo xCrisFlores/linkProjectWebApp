@@ -1,0 +1,57 @@
+CREATE DATABASE Linkproject
+USE Linkproject
+CREATE TABLE [User](
+	code INT NOT NULL,
+	email VARCHAR(50),
+	password VARCHAR(50),
+	name VARCHAR(100),
+	path VARCHAR(100),
+	PRIMARY KEY (code)
+);
+
+CREATE TABLE Student(
+	student_code INT NOT NULL,
+	phone VARCHAR(20),
+	status VARCHAR(50),
+	lab VARCHAR(100),
+	biography VARCHAR(300),
+	PRIMARY KEY (student_code)
+);
+
+CREATE TABLE Schedule(
+	id INT NOT NULL IDENTITY(1,1),
+	Student_code int NOT NULL,
+	day VARCHAR(20),
+	start_time TIME,
+	end_time TIME,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Skills(
+	id INT NOT NULL IDENTITY(1,1),
+	student_code int NOT NULL,
+	skill VARCHAR(80),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Adviser(
+	id INT NOT NULL IDENTITY(1,1),
+	adviser_code INT NOT NULL,
+	division VARCHAR(80),
+	PRIMARY KEY (id)
+);
+
+//ANTES DE CONTINUAR EJECUTA EL SIGUIENTE COMANDO:
+dotnet ef dbcontext scaffold "Server=localhost;Database=LinkProject;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;" Microsoft.EntityFrameworkCore.SqlServer -o Models
+
+ALTER TABLE Student
+ADD CONSTRAINT FK_User_Code FOREIGN KEY (student_code) REFERENCES [User](code);
+
+ALTER TABLE Schedule
+ADD CONSTRAINT FK_Schedule_Id FOREIGN KEY (Student_code) REFERENCES Student(student_code);
+
+ALTER TABLE Skills
+ADD CONSTRAINT FK_Student_Code_skills FOREIGN KEY (student_code) REFERENCES [User](code);
+
+ALTER TABLE Adviser
+ADD CONSTRAINT FK_UserAdviser_Code FOREIGN KEY (adviser_code) REFERENCES [User](code);

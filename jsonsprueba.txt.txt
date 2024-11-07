@@ -1,0 +1,49 @@
+//usuario
+
+{
+  "code": 222,
+  "email": "example@gmail.com",
+  "password": "password",
+  "name": "Someone",
+  "path": "/path/to/image.jpg"
+}
+
+{
+  "code": 111,
+  "email": "example@gmail.com",
+  "password": "password",
+  "name": "Someone",
+  "path": "/path/to/image.jpg"
+}
+
+//alumno
+{
+  "studentCode": 222,
+  "phone": "123456789",
+  "status": "Active",
+  "lab": "Lab 1",
+  "biography": "Exampleg"
+}
+
+//Asesor
+
+{
+  "adviserCode": 111,
+  "division": "IA"
+}
+
+//Horario
+
+{
+  "studentCode": 222,
+  "day": "Monday",
+  "startTime": "12:00:00",
+  "endTime": "15:00:00"
+}
+
+//Habilidades
+{
+  "studentCode": 222,
+  "skill1": "Data structures and algorithms"
+}
+
