@@ -1,7 +1,7 @@
 import apiClient from './apiClient';
 
 /**
- * Modelo de datos para el objeto User.
+ * User Model.
  * @property {number} Code
  * @property {string} [Email] 
  * @property {string} [Password] 
@@ -12,10 +12,8 @@ export const createUser = async (user) => {
   return apiClient.post('/api/user', user);
 };
 
-
-
 export const getUserById = async (id) => {
-  return apiClient.get(`/person/${id}`);
+  console.log("🚀 ~ getUserById ~ id:", id)
+  return apiClient.get(`/api/user/${id}`);
 };
 
-// Otras funciones relacionadas con User

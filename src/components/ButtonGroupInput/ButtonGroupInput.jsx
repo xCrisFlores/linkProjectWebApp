@@ -6,7 +6,6 @@ const ButtonGroupInput = React.forwardRef((props, ref) => {
 
     const handleClick = (value) => {
         if (value === currentValue) {
-            console.log("🚀 Esta pasando aqui");
             return;
         }
         setCurrentValue(value);

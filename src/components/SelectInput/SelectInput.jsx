@@ -6,7 +6,7 @@ const SelectInput = React.forwardRef((props, ref) => {
 
     const handleChange = (event) => {
         const { target: { value } } = event;
-        console.log("🚀 ~ handleChange ~ value:", value)
+        //console.log("🚀 ~ SelectInput ~ handleChange ~ value:", value)
         setCurrentItem(value);
     };
 
@@ -18,14 +18,14 @@ const SelectInput = React.forwardRef((props, ref) => {
             onChange={handleChange}
             autoComplete='off'
             displayEmpty
-            renderValue={value =>  value.label || props.placeholder}
+            renderValue={value =>  value || props.placeholder}
         >
             {
                 props.values.map((value, index) =>
                     <MenuItem
                         key={index}
                         value={value}>
-                        {value.label}
+                        {value}
                     </MenuItem>
                 )
             }

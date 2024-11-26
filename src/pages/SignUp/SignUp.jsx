@@ -1,47 +1,82 @@
-import React, { useState } from 'react'
-import { FormContainer, FormTitle, MainContainer } from './SignUp.styles'
-import { studentFormFields, teacherFormFields, userFormFields } from './signUpFormFields'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Form } from '../../components'
 import { Typography } from '@mui/material'
-import { School as SchoolIcon } from '@mui/icons-material';
+import { FormContainer, FormTitle, MainContainer } from './SignUp.styles'
+import { studentFormFields, teacherFormFields, userFormFields } from './signUpFormFields'
+import useApiRequest from '../../hooks/useApiRequest'
+import { createUser } from '../../api/userApi'
+import { createStudent } from '../../api/studentApi'
+import { createAdviser } from '../../api/adviserApi'
 
 export default function SignUp() {
-    
-
     const [userType, setUserType] = useState('');
-    console.log("🚀 ~ SignUp ~ userType:", userType)
+    const [alert, setAlert] = useState(null);
+
+    const apiRequestUser = useApiRequest(createUser);
+    const apiRequestStudent = useApiRequest(createStudent);
+    const apiRequestAdviser = useApiRequest(createAdviser);
+
+    const loading = apiRequestUser.loading || apiRequestStudent.loading || apiRequestAdviser.loading;
+    const success = apiRequestUser.success;
+    const error = apiRequestUser.error || apiRequestStudent.error || apiRequestAdviser.error;
+
+    useEffect(() => {
+        if (success)
+            setAlert({ type: 'success', message: 'Operación exitosa' });
+        else if (error) 
+            setAlert({ type: 'error', message: `Ocurrió un error. Inténtalo de nuevo` });
+    }, [success, error])
     
-    const newUserFormFields = [
-        ...userFormFields,
-        {
-            label: "Tipo de cuenta",
-            input: {
-                id: "userType",
-                type: 'buttongroup',
-                required: true,
-                onChange: (type) => setUserType(type),
-                values: [
-                    { id: 1, label: 'Estudiante' },
-                    { id: 2, label: 'Asesor'},
-                ]
-            }, 
-            icon: SchoolIcon,
-            gridColumnSpan: 2,
-        }
-    ]
 
-    const getFormFields = () => {
-        switch (userType.id) {
-            case 1:
-                return [...newUserFormFields, ...studentFormFields];
-            case 2:
-                return [...newUserFormFields, ...teacherFormFields]; 
-            default:
-                return newUserFormFields;
+    const baseFormFields = useMemo(() => {
+        userFormFields[userFormFields.length - 1].input["onChange"] = (type) => setUserType(type);
+        return userFormFields;
+    }, []);
+
+    const handleOnSubmitForm = async (outValues) => {
+        const code = Number(outValues.code);
+        const user = {
+            Code: code,
+            Email: outValues.email,
+            Name: outValues.name,
+            Password: outValues.password,
+            Path: outValues.path,
+        }
+        //console.log("🚀 ~ handleOnSubmitForm ~ user:", user)
+        await apiRequestUser.execute(user);
+
+        if (userType.id === 1) {
+            const student = {
+                StudentCode: code,
+                Phone: outValues.phone,
+                Status: 'no-member',
+                Lab: outValues.lab,
+                Biography: outValues.bio,
+            }
+            //console.log("🚀 ~ handleOnSubmitForm ~ student:", student)
+            await apiRequestStudent.execute(student);
         }
 
+        if (userType.id === 2) {
+            const adviser = {
+                AdviserCode: code,
+                Division: outValues.division,
+            }
+            //console.log("🚀 ~ handleOnSubmitForm ~ adviser:", adviser)
+            await apiRequestAdviser.execute(adviser);
+        }
     }
 
+    const formFields = useMemo(() => {
+        switch (userType.id) {
+            case 1:
+                return [...baseFormFields, ...studentFormFields];
+            case 2:
+                return [...baseFormFields, ...teacherFormFields];
+            default:
+                return baseFormFields;
+        }
+    }, [userType, baseFormFields]);
 
     return (
         <MainContainer>
@@ -54,7 +89,7 @@ export default function SignUp() {
                         Únete a un equipo o administralo
                     </Typography>
                 </FormTitle>
-                <Form fields={getFormFields()}/>
+                <Form fields={formFields} onSubmitForm={handleOnSubmitForm} loading={loading} alert={alert}/>
             </FormContainer>
         </MainContainer>
     )

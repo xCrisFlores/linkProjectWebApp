@@ -1,7 +1,7 @@
 const getComponents = (theme) => ({
     MuiCssBaseline: {
         styleOverrides: {
-            body: { padding: 0, margin: 0 },
+            body: {padding: 0,margin: 0},
         }
     },
     MuiContainer: {

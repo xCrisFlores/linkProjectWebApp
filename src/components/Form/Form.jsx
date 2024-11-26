@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormContainer, FormField, FormGrid, FieldLabel, FieldHelperText, FormAlert } from './Form.styles';
-import { Button, OutlinedInput, FormLabel, Typography} from '@mui/material'
+import { Button, OutlinedInput, FormLabel, Typography } from '@mui/material'
 import useForm from './useForm';
 import SelectInput from '../SelectInput/SelectInput';
 import PasswordInput from '../PasswordInput/PasswordInput';
@@ -8,33 +8,26 @@ import FileInput from '../FileInput/FileInput';
 import MultiSelectInput from '../MultiSelectInput/MultiSelectInput';
 import ButtonGroupInput from '../ButtonGroupInput/ButtonGroupInput';
 
+export default function Form({ fields = [], onSubmitForm = () => { }, loading = false, alert = null }) {
+    const { getOutValues, formErrors, inputRefs, isFormValid, initOutValues } = useForm(fields);
+    /*     const renderCount = useRef(0);
+        useEffect(() => {
+            renderCount.current += 1;
+            console.log(`Render count: ${renderCount.current}`);
+        });
+    */
 
-export default function Form({ onSubmitForm, fields }) {
-
-/*     const renderCount = useRef(0);
-    useEffect(() => {
-        renderCount.current += 1;
-        console.log(`Render count: ${renderCount.current}`);
-    });
- */
-    const {  formErrors, inputRefs, isFormValid, initOutValues } = useForm(fields);
-    const [alertStatus, setAlertStatus] = useState({ status: 'success', visible: false });
-
-    const handleOnInputClick = () => {
-        if (alertStatus.visible === true) {
-            setAlertStatus((prev) => ({ ...prev, visible: false }));
-        }
-    }
-
-    const handleOnSubmit = (e) => {
+    const handleOnSubmit = async (e) => {
         e.preventDefault();
 
-        if (!isFormValid()) {
+        const outValues = getOutValues();
+
+        if (!isFormValid(outValues)) {
             console.log('There are errors in form');
             return;
         }
 
-        onSubmitForm && onSubmitForm(setAlertStatus);
+        await onSubmitForm(outValues);
         initOutValues();
     }
 
@@ -43,7 +36,6 @@ export default function Form({ onSubmitForm, fields }) {
             ...field.input,
             ref: inputRefs.current[index],
             error,
-            onClick: () => handleOnInputClick(),
             size: 'small',
             sx: { borderRadius: '0.5rem' }
         }
@@ -52,13 +44,13 @@ export default function Form({ onSubmitForm, fields }) {
             case 'password':
                 return <PasswordInput {...inputProps} />
             case 'select':
-                return <SelectInput {...inputProps}  />
+                return <SelectInput {...inputProps} />
             case 'multiselect':
-                return <MultiSelectInput {...inputProps}  />
+                return <MultiSelectInput {...inputProps} />
             case 'file':
                 return <FileInput {...inputProps} />
             case 'buttongroup':
-                return <ButtonGroupInput {...inputProps}  />
+                return <ButtonGroupInput {...inputProps} />
             default:
                 return <OutlinedInput {...inputProps} />
         }
@@ -76,8 +68,8 @@ export default function Form({ onSubmitForm, fields }) {
                                     htmlFor={field.input.id}
                                     error={error}>
                                     <FieldLabel>
-                                        <field.icon />
-                                        <Typography variant='subtitle1'>
+                                        <field.icon sx={{ fontSize: '1.25rem' }} />
+                                        <Typography variant='subtitle3'>
                                             {`${field.label}${(field.input.required) && ' *'}`}
                                         </Typography>
                                     </FieldLabel>
@@ -98,19 +90,18 @@ export default function Form({ onSubmitForm, fields }) {
                 }
             </FormGrid>
             {
-                alertStatus.visible &&
+                alert &&
                 <FormAlert
                     variant="filled"
-                    severity={alertStatus.status}>
-                    {alertStatus.status === 'success'
-                        ? 'Form enviado correctamente.'
-                        : 'Ocurrió un problema. Por favor, inténtalo más tarde.'}
+                    severity={alert.type}>
+                    {alert.message}
                 </FormAlert>
             }
             <Button
+                disabled={loading}
                 variant='contained'
                 onClick={(e) => handleOnSubmit(e)}>
-                Enviar
+                {loading ? 'Enviando...' : 'Enviar'}
             </Button>
 
         </FormContainer>

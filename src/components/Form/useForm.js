@@ -23,7 +23,7 @@ const useForm = (fields = {}) => {
     useEffect(() => {
         const currentLength = inputRefs.current.length;
         const fieldsLength = fields.length;
-    
+
         // Para agregar referencias
         if (currentLength < fieldsLength) {
             for (let i = currentLength; i < fieldsLength; i++) {
@@ -32,7 +32,7 @@ const useForm = (fields = {}) => {
         }
 
         // Para eliminar referencias
-        else if (currentLength > fieldsLength){
+        else if (currentLength > fieldsLength) {
             inputRefs.current = inputRefs.current.slice(0, fieldsLength);
         }
 
@@ -42,36 +42,30 @@ const useForm = (fields = {}) => {
     useEffect(() => {
         if (refsReady) {
             initOutValues();
-            setRefsReady(false); 
+            setRefsReady(false);
         }
     }, [refsReady]);
 
-    const initOutValues = () =>
+    const initOutValues = () => {
         inputRefs.current.forEach((ref) => {
             const input = ref.current.querySelector('input');
-            if (input)
-                input.value = '';
-        })
+            if (input) input.value = input.value || '';
 
+        });
+    };
 
-    const getOutValues = () => {
-        console.log("inputRefs.current", inputRefs.current)
-        
-        return fields.reduce((values, field, index) => {
-            const input = inputRefs.current[index].current.querySelector('input');
-            //console.log("🚀 ~ fields.reduce ~ input:", input)
-            
-            if (input)
-                values[field.input.id] = input.value;
+    const getOutValues = () => fields.reduce((values, field, index) => {
+        const input = inputRefs.current[index].current.querySelector('input');
+        //console.log("🚀 ~ fields.reduce ~ input:", input)
+        if (input) values[field.input.id] = input.value;
+        return values;
+    }, {});
 
-            return values;
-        }, {});
-    }
-
-    const isFormValid = () => {
-        const outValues = getOutValues();
+    const isFormValid = (outValues) => {
         console.log("🚀 ~ isFormValid ~ outValues:", outValues)
-        
+
+        if (!outValues) return false;
+
         const newFormErrors = {};
 
         fields.forEach((field) => {
@@ -96,7 +90,7 @@ const useForm = (fields = {}) => {
         return Object.keys(newFormErrors).length === 0;
     }
 
-    return { formErrors, inputRefs, isFormValid, initOutValues }
+    return { formErrors, inputRefs, isFormValid, initOutValues, getOutValues}
 }
 
 export default useForm;

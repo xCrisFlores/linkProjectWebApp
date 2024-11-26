@@ -7,7 +7,6 @@ export const MainContainer = styled(Container)(({ theme }) =>
         backgroundColor: 'background.main',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         width: '100%',
         height: '100%',
         px: 14,
