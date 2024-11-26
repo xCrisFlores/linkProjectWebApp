@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ItemContainer, ItemImageProp, ItemProp, ItemPropGroup, ListContainer, MainContainer, TitleIcon } from './ProjectsList.styles'
 import { projectsListDummy as projectsList } from './projectsListDummy'
 import { CalendarMonth, Person } from '@mui/icons-material'
@@ -7,11 +7,9 @@ import { getAllProjects } from '../../api/projectApi'
 import useApiRequest from '../../hooks/useApiRequest'
 import { LoadingView, ErrorView } from '../../components'
 import { useNavigate } from 'react-router-dom'
-import UserContext from '../../context/UserContext'
 
 export default function ProjectsList() {
     const navigate = useNavigate();
-    const { user } = useContext(UserContext);
     const { loading, error, success, execute } = useApiRequest(getAllProjects);
     const [projects, setProjects] = useState(null);
 
@@ -24,18 +22,18 @@ export default function ProjectsList() {
     }, [success]);
 
     if (loading) return <LoadingView />
-    if (error || !user) return <ErrorView />
+    if (error) return <ErrorView />
     if (success && projects)
         return (
             <MainContainer>
+                <Typography variant='h4'>Lista de proyectos</Typography>
                 <ListContainer>
                     {projects.map((item, index) =>
                         <ItemContainer
                             key={index}
                             component="button"
                             onClick={() => navigate('../details', { state: { id: item.id } })}>
-                            <ItemImageProp>
-                            </ItemImageProp>
+                            <ItemImageProp/>
                             <ItemProp>
                                 <Typography variant='subtitle3' color='primary.main'>
                                     {item.name}

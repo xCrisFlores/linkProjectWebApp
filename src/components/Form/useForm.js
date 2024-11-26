@@ -14,7 +14,7 @@ const validationStrategies = {
     match: validateRegexMatch,
 };
 
-const useForm = (fields = {}) => {
+const useForm = (fields = []) => {
     const [formErrors, setFormErrors] = useState({});
     const [refsReady, setRefsReady] = useState(false);
     const inputRefs = useRef([]);
@@ -38,17 +38,17 @@ const useForm = (fields = {}) => {
 
         setRefsReady(true);
     }, [fields]);
-
+    
     useEffect(() => {
         if (refsReady) {
             initOutValues();
             setRefsReady(false);
         }
     }, [refsReady]);
-
+    
     const initOutValues = () => {
         inputRefs.current.forEach((ref) => {
-            const input = ref.current.querySelector('input');
+            const input = ref.current?.querySelector('input');
             if (input) input.value = input.value || '';
 
         });

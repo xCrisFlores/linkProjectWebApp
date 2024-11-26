@@ -15,3 +15,7 @@ export const getAreas = async (id) => {
 export const getInnovations = async (id) => {
   return apiClient.get(`api/project/innovations?project_id${id}`);
 };
+export const createMemberRequest = async (request) => {
+  return apiClient.post('api/project/members/request', request);
+};
+

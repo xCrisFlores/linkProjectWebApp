@@ -14,60 +14,61 @@ export default function Login() {
     const navigate = useNavigate();
     const { setUser } = useContext(UserContext);
 
-    const { loading, error, success, execute } = useApiRequest(getUserById);
+    const userApi = useApiRequest(getUserById);
     const studentApi = useApiRequest(getStudentById);
-    const advisorApi = useApiRequest(getAdviserById);
+    const adviserApi = useApiRequest(getAdviserById);
+    
     const [alert, setAlert] = useState(null);
     const [formValues, setFormValues] = useState(null);
+    
+    useEffect(() => {
+        if (userApi.success)
+            handleOnUserSuccess(userApi.success.data);
 
-    const updateUserAndNavigate = (user, apiData, type) => {
-        setUser({ ...user, ...apiData, type });
+        else if (userApi.error) {
+            console.log("🚀 ~ useEffect ~ error:", userApi.error);
+
+            (userApi.error.status === 404)
+                ? setAlert({ type: 'error', message: `Este usuario no se ha registrado.` })
+                : setAlert({ type: 'error', message: `Ocurrió un error. Inténtalo de nuevo.` });
+        }
+    }, [userApi.success, userApi.error])
+
+    useEffect(() => {
+        if (studentApi.success) 
+            updateUserAndNavigate( studentApi.success.data, 'student');
+        else if (adviserApi.success) 
+            updateUserAndNavigate(adviserApi.success.data, 'adviser');
+    }, [studentApi.success, adviserApi.success]);
+
+    const updateUserAndNavigate = (otherObj, type) => {
+        setUser((prevUser) => ({ ...prevUser, [type]: otherObj}));
         navigate('/dashboard');
     };
 
-    const handleOnUserSuccess = async (user) => {
-        console.log("Successful getById request.", user);
-
+    const handleOnUserSuccess = (user) => {
         if (user.password !== formValues.password) {
             setAlert({ type: 'error', message: `La contraseña no coincide. Intenta de nuevo.` });
             return;
         }
 
-        await studentApi.execute(user.code);
-        if (studentApi.success) {
-            updateUserAndNavigate(user, studentApi.success.data, 'adviser');
-            return;
+        setUser(user);
+        try {
+            studentApi.execute(user.code);
+            adviserApi.execute(user.code);
+        } catch (error) {
+            console.error("Error during API calls:", error);
+            setAlert({ type: 'error', message: `Ha ocurrido un error. Intente de nuevo.` })
         }
-
-        await advisorApi.execute(user.code);
-        if (advisorApi.success) {
-            updateUserAndNavigate(user, advisorApi.success.data, 'adviser');
-            return;
-        }
-        setAlert({ type: 'error', message: `Ha ocurrido un error. Intente de nuevo.` })
     }
 
-    useEffect(() => {
-        if (success)
-            handleOnUserSuccess(success.data);
-
-        else if (error) {
-            console.log("🚀 ~ useEffect ~ error:", error);
-
-            (error.status === 404)
-                ? setAlert({ type: 'error', message: `Este usuario no se ha registrado.` })
-                : setAlert({ type: 'error', message: `Ocurrió un error. Inténtalo de nuevo.` });
-        }
-    }, [success, error])
-
     const handleOnSingUp = () => {
-        //console.log(navigate)
         navigate('/signup');
     }
 
     const handleOnSubmitForm = (outValues) => {
         setFormValues(outValues);
-        execute(Number(outValues.code));
+        userApi.execute(Number(outValues.code));
     }
 
     return (
@@ -81,7 +82,7 @@ export default function Login() {
                         Por favor ingresa a tu cuenta para continuar
                     </Typography>
                 </FormTitle>
-                <Form fields={formFields} onSubmitForm={handleOnSubmitForm} loading={loading} alert={alert} />
+                <Form fields={formFields} onSubmitForm={handleOnSubmitForm} loading={userApi.loading} alert={alert} />
                 <Divider />
                 <Container sx={{ display: 'flex' }}>
                     <Typography variant='body2' color='grey'>

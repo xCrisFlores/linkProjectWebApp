@@ -32,3 +32,13 @@ export const ItemWithIcon = styled(Box)(({ theme }) =>
         gap: 1,
         justifyContent: 'space-between'
     }));
+
+export const ItemImageProp = styled('img')(({ theme }) =>
+    theme.unstable_sx({
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        backgroundImage: `url(${process.env.PUBLIC_URL}/assets/fallback_image.svg)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+    }));

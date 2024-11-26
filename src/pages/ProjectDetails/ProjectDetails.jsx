@@ -1,39 +1,48 @@
 import { Box, Button, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react'
-import { Grid, ItemContainer, ItemWithIcon, MainContainer } from './ProjectDetails.styles';
+import React, { useContext, useEffect, useState } from 'react'
+import { Grid, ItemContainer, ItemImageProp, ItemWithIcon, MainContainer } from './ProjectDetails.styles';
 import { AddBox, CalendarMonth, Person } from '@mui/icons-material';
 import useApiRequest from '../../hooks/useApiRequest';
-import { getAreas, getInnovations, getProjectById, getRequirements } from '../../api/projectApi';
+import { createMemberRequest, getAreas, getInnovations, getProjectById, getRequirements } from '../../api/projectApi';
 import { ErrorView, LoadingView } from '../../components';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserContext from '../../context/UserContext';
+import { updateStudent } from '../../api/studentApi';
 
 export default function ProjectDetails() {
+    const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
+
     const location = useLocation();
-    const { id } = location.state || null;
+    const { id } = location.state || {};
 
     const projectApi = useApiRequest(getProjectById);
     const areasApi = useApiRequest(getAreas);
     const reqApi = useApiRequest(getRequirements);
     const innoApi = useApiRequest(getInnovations);
 
-    const loading = projectApi.loading || areasApi.loading || reqApi.loading || innoApi.loading;
-    const error = projectApi.error || areasApi.error || reqApi.error || innoApi.error;
-    const success = projectApi.success && areasApi.success && reqApi.success && innoApi.success;
+    const projectLoading = projectApi.loading || areasApi.loading || reqApi.loading || innoApi.loading;
+    const projectError = projectApi.error || areasApi.error || reqApi.error || innoApi.error;
+    const projectSuccess = projectApi.success && areasApi.success && reqApi.success && innoApi.success;
 
+    const memReqApi = useApiRequest(createMemberRequest);
+    const studentApi = useApiRequest(updateStudent);
+
+    const memReqLoading = memReqApi.loading || studentApi.loading;
+    const memReqError = memReqApi.error || studentApi.error;
+    const memReqSuccess = memReqApi.success && studentApi.success;
 
     useEffect(() => {
         projectApi.execute(id);
         areasApi.execute(id);
         reqApi.execute(id);
         innoApi.execute(id);
-    }, [id]);
+    }, []);
 
     const [projectDetails, setProjectDetails] = useState(null);
-
     useEffect(() => {
-        console.log("🚀 ~ useEffect ~ success:", success)
-        if (success) {
+        console.log("🚀 ~ useEffect ~ projectSuccess:", projectSuccess)
+        if (projectSuccess) {
             setProjectDetails({
                 ...projectApi.success.data,
                 areas: areasApi.success.data,
@@ -41,16 +50,37 @@ export default function ProjectDetails() {
                 innovation: innoApi.success.data[0]
             });
         }
-    }, [success])
+    }, [projectSuccess])
+
+    useEffect(() => {
+        console.log("🚀 ~ useEffect ~ memReqSuccess:", memReqSuccess)
+        if (memReqSuccess) {
+            setUser((prevUser) => ({
+                ...prevUser,
+                student: {
+                    ...prevUser.student,
+                    status: 'pendant',
+                },
+            }));
+            navigate('../details', { state: { reload: true } });
+        }
+    }, [memReqSuccess])
 
     const handleOnSubmit = () => {
-        //navigate('../join_project', { state: { id: projectDetails.id } });
+        const request = {
+            SubmittedDate: new Date().toISOString().split('T')[0],
+            Status: 'pendant',
+            ProjectId: projectDetails.id,
+            StudentCode: user.code,
+        }
+
+        memReqApi.execute(request);
+        studentApi.execute({ ...user.student, status: 'pendant' });
     }
 
-
-    if (loading) return <LoadingView />
-    if (error) return <ErrorView />
-    if (success && projectDetails) {
+    if (projectLoading || memReqLoading) return <LoadingView />
+    if (projectError || memReqError) return <ErrorView />
+    if (projectSuccess && projectDetails) {
         const HeaderItem = ({ size, value, title, icon = null }) => {
             return (
                 <Grid size={size}>
@@ -94,36 +124,52 @@ export default function ProjectDetails() {
                         </Typography>
                     </Item>
                     <Item size={3} title={'Logo'}>
-                        <Box sx={{ width: "100%", height: "100%" }}>
-                            <Typography variant="body2">Aquí va el logo</Typography>
-                        </Box>
+                        <ItemImageProp/>
                     </Item>
                     <Grid container spacing={2} size={9}>
                         <Item size={6} title={'Conocimientos requeridos'}>
-                            {projectDetails.req.map((req, index) =>
+                            <Typography variant="body2">✔ Python</Typography>
+                            <Typography variant="body2">✔ Métodos Numéricos</Typography>
+                            <Typography variant="body2">✔ React.js</Typography>
+                            <Typography variant="body2">✔ Angular</Typography>
+                            <Typography variant="body2">✔ Probabilidad y Estadística</Typography>
+                            {/* {projectDetails.req.map((req, index) =>
                                 <Typography key={index} variant="body2">{req.id}</Typography>
-                            )}
+                            )} */}
                         </Item>
                         <Item size={6} title={'Miembros del equipo'}>
-                            {projectDetails.req.map((req, index) =>
-                                <Typography key={index} variant="body2">{req.id}</Typography>
-                            )}
+                            <Typography variant="body2">• Laura Belén Pelagio Salazar</Typography>
+                            <Typography variant="body2">• Miguel Godínez González</Typography>
+                            <Typography variant="body2">• Leonardo Loza Sandoval</Typography>
+                            <Typography variant="body2">• Emma Luna Sofia Salas Salazar</Typography>
+                            <Typography variant="body2">• Karime Alejandra Martínez Salazar</Typography>
+                            {/* {projectDetails.req.map((member, index) =>
+                                <Typography key={index} variant="body2">{member.id}</Typography>
+                            )} */}
                         </Item>
                         <Item size={6} title={'Tipo de innovación'}>
-                            <Typography variant="body2">{projectDetails.innovation}</Typography>
+                            {/* <Typography variant="body2">{projectDetails.innovation}</Typography> */}
+                            <Typography variant="body2">Innovación radical</Typography>
                         </Item>
                         <Item size={6} title={'Áreas'}>
-                            {projectDetails.areas.map((area, index) =>
+                            <Typography variant="body2">• Inteligencia Artificial</Typography>
+                            <Typography variant="body2">• Informática</Typography>
+                            <Typography variant="body2">• Biología</Typography>
+                            <Typography variant="body2">• Matemáticas</Typography>
+                            {/* {projectDetails.areas.map((area, index) =>
                                 <Typography key={index} variant="body2">{area.id}</Typography>
-                            )}
+                            )} */}
                         </Item>
                     </Grid>
                 </Grid>
-                <Button
-                    variant='contained'
-                    onClick={(e) => handleOnSubmit(e)}>
-                    Solicitar unirse al equipo
-                </Button>
+                {
+                    (user.student && user.student.status === 'no-member') &&
+                    <Button
+                        variant='contained'
+                        onClick={(e) => handleOnSubmit(e)}>
+                        Solicitar unirse al equipo
+                    </Button>
+                }
             </MainContainer>
         );
     }

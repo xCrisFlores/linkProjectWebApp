@@ -7,8 +7,10 @@ import useApiRequest from '../../hooks/useApiRequest'
 import { createUser } from '../../api/userApi'
 import { createStudent } from '../../api/studentApi'
 import { createAdviser } from '../../api/adviserApi'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignUp() {
+    const navigate = useNavigate();
     const [userType, setUserType] = useState('');
     const [alert, setAlert] = useState(null);
 
@@ -21,8 +23,10 @@ export default function SignUp() {
     const error = apiRequestUser.error || apiRequestStudent.error || apiRequestAdviser.error;
 
     useEffect(() => {
-        if (success)
-            setAlert({ type: 'success', message: 'Operación exitosa' });
+        if (success){
+            console.log("🚀 ~ signup ~ success:", success)
+            navigate('../');
+        }
         else if (error) 
             setAlert({ type: 'error', message: `Ocurrió un error. Inténtalo de nuevo` });
     }, [success, error])
@@ -42,7 +46,6 @@ export default function SignUp() {
             Password: outValues.password,
             Path: outValues.path,
         }
-        //console.log("🚀 ~ handleOnSubmitForm ~ user:", user)
         await apiRequestUser.execute(user);
 
         if (userType.id === 1) {

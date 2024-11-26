@@ -9,7 +9,7 @@ export const MainContainer = styled(Box)(({ theme }) =>
         flexDirection: 'column',
         width: '100%',
         height: '100vh',
-        p: 3,
+        gap: 4
     }));
 
 export const ListContainer = styled(Box)(({ theme }) =>
