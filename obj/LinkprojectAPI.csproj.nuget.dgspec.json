@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\crist\\Downloads\\LinkProjectAPI\\LinkprojectAPI.csproj": {}
+    "C:\\Users\\PrestadoresHCD\\Downloads\\linkProjectApi\\LinkprojectAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\crist\\Downloads\\LinkProjectAPI\\LinkprojectAPI.csproj": {
+    "C:\\Users\\PrestadoresHCD\\Downloads\\linkProjectApi\\LinkprojectAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\crist\\Downloads\\LinkProjectAPI\\LinkprojectAPI.csproj",
+        "projectUniqueName": "C:\\Users\\PrestadoresHCD\\Downloads\\linkProjectApi\\LinkprojectAPI.csproj",
         "projectName": "LinkprojectAPI",
-        "projectPath": "C:\\Users\\crist\\Downloads\\LinkProjectAPI\\LinkprojectAPI.csproj",
-        "packagesPath": "C:\\Users\\crist\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\crist\\Downloads\\LinkProjectAPI\\obj\\",
+        "projectPath": "C:\\Users\\PrestadoresHCD\\Downloads\\linkProjectApi\\LinkprojectAPI.csproj",
+        "packagesPath": "C:\\Users\\PrestadoresHCD\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PrestadoresHCD\\Downloads\\linkProjectApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\crist\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\PrestadoresHCD\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"

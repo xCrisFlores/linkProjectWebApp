@@ -22,9 +22,13 @@ namespace LinkprojectAPI.Services
                         select User).ToListAsync();
         }
 
-        public async Task<ProjectMember> FindOne(int project_id, int id)
+        public async Task<User> FindOne(int project_id, int id)
         {
-            return await _context.ProjectMembers.FirstOrDefaultAsync(x => x.ProjectId == project_id && x.Id == id);
+            return await (from user in _context.Users
+                        join member in _context.ProjectMembers
+                        on user.Code equals member.UserCode
+                        where member.ProjectId == project_id && user.Code == id
+                        select user).FirstOrDefaultAsync();
         }
 
         public async Task<int> Insert(ProjectMember member)
