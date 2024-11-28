@@ -3,7 +3,6 @@ import apiClient from './apiClient';
 export const createProject = async (project) => {
   return apiClient.post('/api/project', project);
 };
-
 export const getAllProjects = async () => {
   return apiClient.get(`/api/project`);
 };
@@ -31,6 +30,9 @@ export const createInnos = async (innovation) => {
 export const getMembers = async (id) => {
   return apiClient.get(`api/project/members?id=${id}`);
 };
+export const getMemberById = async (project_id, id) => {
+  return apiClient.get(`api/project/members/${project_id}/${id}`);
+};
 export const getAllAreas = async () => {
   return apiClient.get(`api/project/areas/all`);
 };
@@ -39,5 +41,8 @@ export const getAllInnovations = async () => {
 };
 export const createMemberRequest = async (request) => {
   return apiClient.post('api/project/members/request', request);
+};
+export const getRequests = async (id) => {
+  return apiClient.get(`api/project/members/requests/${id}`);
 };
 
