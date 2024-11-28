@@ -1,12 +1,17 @@
-import React, { useContext } from 'react'
-import UserContext from '../../context/UserContext'
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import UserContext from '../../context/UserContext';
 import { Box, Button, Typography } from '@mui/material';
 import { ErrorContainer } from './MyProject.styles';
 
 export default function MyProject() {
     const { user } = useContext(UserContext);
+    const navigate = useNavigate();
 
-    const handleOnClick = () => { }
+    const handleOnClick = () => {
+        // Navega al formulario
+        navigate('../create-project');
+    };
 
     if (user.status !== 'member') return (
         <ErrorContainer>
@@ -14,7 +19,7 @@ export default function MyProject() {
             {
                 (user.student)
                     ? <Box sx={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="body1" >
+                        <Typography variant="body1">
                             Crea un proyecto para ser líder o solicita unirte a uno.
                         </Typography>
                         <Button
@@ -28,7 +33,7 @@ export default function MyProject() {
                     </Typography>
             }
         </ErrorContainer>
-    )
+    );
 
-    return <></>
+    return <></>;
 }

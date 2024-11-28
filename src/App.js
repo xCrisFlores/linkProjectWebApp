@@ -5,6 +5,7 @@ import { CssBaseline } from '@mui/material';
 import { UserProvider } from './context/UserContext';
 import theme from "./theme/theme";
 import { AuthWrapper, ErrorView } from './components';
+import ProjectForm from './pages/ProjectForm/ProjectForm';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
                 element={<Dashboard />}>
                 <Route index element={<Navigate to="projects" replace />} />
                 <Route path="projects" element={<ProjectsList />} />
+                <Route path="create-project" element={<ProjectForm/>} />
                 <Route path="details" element={<ProjectDetails />} />
                 <Route path="my_project" element={<MyProject />} />
                 <Route path="requests" element={<ErrorView title='¡Ups! Esta página sigue en construcción.'/>} />
