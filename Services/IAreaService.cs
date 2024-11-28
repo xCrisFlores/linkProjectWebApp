@@ -5,6 +5,7 @@ namespace LinkprojectAPI.Services
 {
     public interface IAreaService
     {
+        Task<IEnumerable<Area>> FindAllArea();
         Task<IEnumerable<Area>> FindAll(int project_id);
         Task<Area> FindOne(int project, int id);
         Task<int> Insert(AreaORM area);

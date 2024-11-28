@@ -15,6 +15,20 @@ namespace LinkprojectAPI.Controllers
             _service = innoService;
         }
 
+        [HttpGet("all/")]
+        public async Task<ActionResult<IEnumerable<Innovation>>> GetAllInnos()
+        {
+            try
+            {
+                var innos = await _service.FindAllInno();
+                return Ok(innos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Innovation>>> GetInnos(int project_id)
         {

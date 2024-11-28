@@ -5,6 +5,7 @@ namespace LinkprojectAPI.Services
 {
     public interface IInnoService
     {
+        Task<IEnumerable<Innovation>> FindAllInno();
         Task<IEnumerable<Innovation>> FindAll(int project_id);
         Task<Innovation> FindOne(int project, int id);
         Task<int> Insert(InnoORM inno);

@@ -15,6 +15,20 @@ namespace LinkprojectAPI.Controllers
             _service = areaService;
         }
 
+        [HttpGet("all/")]
+        public async Task<ActionResult<IEnumerable<Area>>> GetAllAreas()
+        {
+            try
+            {
+                var areas = await _service.FindAllArea();
+                return Ok(areas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Area>>> GetAreas(int project_id)
         {

@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173")// Agrega la URL de tu frontend para permitir los CURLS
+            builder.WithOrigins("http://localhost:5173","http://localhost:3000")// Agrega la URL de tu frontend para permitir los CURLS
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });

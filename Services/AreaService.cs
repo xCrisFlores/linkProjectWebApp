@@ -13,6 +13,13 @@ namespace LinkprojectAPI.Services
             _context = context;
         }
 
+        public async Task<IEnumerable<Area>> FindAllArea()
+        {
+            return await (from area in _context.Areas
+                        join ProjectArea in _context.ProjectAreas
+                        on area.Id equals ProjectArea.AreaId
+                        select area).ToListAsync();
+        }
         public async Task<IEnumerable<Area>> FindAll(int id)
         {
             return await (from area in _context.Areas

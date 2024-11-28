@@ -13,6 +13,13 @@ namespace LinkprojectAPI.Services
             _context = context;
         }
 
+        public async Task<IEnumerable<Innovation>> FindAllInno()
+        {
+            return await (from Innovation in _context.Innovations
+                        join ProjectInnovation in _context.ProjectInnovations
+                        on Innovation.Id equals ProjectInnovation.InnovationId
+                        select Innovation).ToListAsync();
+        }
         public async Task<IEnumerable<Innovation>> FindAll(int id)
         {
             return await (from Innovation in _context.Innovations

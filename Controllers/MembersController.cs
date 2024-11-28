@@ -16,11 +16,11 @@ namespace LinkprojectAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectMember>>> GetMembers()
+        public async Task<ActionResult<IEnumerable<ProjectMember>>> GetMembers(int id)
         {
             try
             {
-                var members = await _service.FindAll();
+                var members = await _service.FindAll(id);
                 return Ok(members);
             }
             catch (Exception ex)

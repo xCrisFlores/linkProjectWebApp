@@ -13,9 +13,13 @@ namespace LinkprojectAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<ProjectMember>> FindAll()
+        public async Task<IEnumerable<User>> FindAll(int id)
         {
-            return await _context.ProjectMembers.ToListAsync();
+            return await (from User in _context.Users
+                        join ProjectMember in _context.ProjectMembers
+                        on User.Code equals ProjectMember.UserCode
+                        where ProjectMember.ProjectId == id
+                        select User).ToListAsync();
         }
 
         public async Task<ProjectMember> FindOne(int project_id, int id)
