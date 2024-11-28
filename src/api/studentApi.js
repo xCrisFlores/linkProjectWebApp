@@ -5,7 +5,7 @@ export const createStudent = async (student) => {
 };
 
 export const getStudentById = async (id) => {
-  return apiClient.get(`/api/student/${id}`);
+  return apiClient.get(`/api/student/${id}?Code=${id}`);
 };
 
 export const updateStudent = async (student) => {

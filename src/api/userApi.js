@@ -14,6 +14,6 @@ export const createUser = async (user) => {
 
 export const getUserById = async (id) => {
   console.log("🚀 ~ getUserById ~ id:", id)
-  return apiClient.get(`/api/user/${id}`);
+  return apiClient.get(`/api/user/${id}?Code=${id}`);
 };
 

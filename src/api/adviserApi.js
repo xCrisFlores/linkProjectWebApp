@@ -4,5 +4,5 @@ export const createAdviser = async (adviser) => {
     return apiClient.post('/api/adviser', adviser);
   };
 export const getAdviserById = async (id) => {
-    return apiClient.get(`/api/adviser/${id}`);
+    return apiClient.get(`/api/adviser/${id}?Code=${id}`);
   };
