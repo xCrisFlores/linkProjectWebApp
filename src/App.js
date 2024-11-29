@@ -6,6 +6,8 @@ import { UserProvider } from './context/UserContext';
 import theme from "./theme/theme";
 import { AuthWrapper, ErrorView } from './components';
 import ProjectForm from './pages/ProjectForm/ProjectForm';
+import { Requests } from './pages/Requests/Requests';
+import Tasks from './pages/Tasks/Tasks';
 
 function App() {
   return (
@@ -24,7 +26,8 @@ function App() {
                 <Route path="create-project" element={<ProjectForm/>} />
                 <Route path="details" element={<ProjectDetails />} />
                 <Route path="my_project" element={<MyProject />} />
-                <Route path="requests" element={<ErrorView title='¡Ups! Esta página sigue en construcción.'/>} />
+                <Route path="requests" element={<Requests />} />
+                <Route path="tasks" element={<Tasks />} />
               </Route>
             </Routes>
           </AuthWrapper>
